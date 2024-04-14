@@ -1,0 +1,9 @@
+bin/
+.gradle/
+.idea/
+.vscode/
+build/
+tmp/
+*-secure.*
+*-local.*
+*-prod.*

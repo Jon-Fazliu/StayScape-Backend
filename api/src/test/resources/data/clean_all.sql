@@ -1,0 +1,3 @@
+DELETE FROM tours;
+DELETE FROM activity;
+DELETE FROM users;

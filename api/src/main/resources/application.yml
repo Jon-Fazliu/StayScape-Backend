@@ -1,0 +1,136 @@
+logging:
+  level:
+    root: ERROR
+    com.stayscape: INFO
+    org.springframework.security: ERROR
+  pattern:
+    # pattern for including MDC
+    console: ${CONSOLE_LOG_PATTERN:%clr(%d{${LOG_DATEFORMAT_PATTERN:yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr([%15.15t]){faint} [%logger] %clr(%F:%L){cyan} %clr(:){faint} %m %clr({){faint}%X%clr(}){faint}%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}}
+
+
+app:
+  jwt: ${APP_JWT:TODO}
+  frontend:
+    url: ${FRONTEND_URL:localhost:8080}
+  csv:
+    price-per-unit: 2.5
+    sap-material-number: TODO
+    tax-number: M2
+    order: 8400000098
+    account: 492090
+    payment-terms: 1100
+  templating:
+    classpath-dir: /freemarker
+  mail:
+    enabled: true
+    default-from: ${MAIL_DEFAULT_FROM:no-reply@stayscape.com}
+
+mail:
+  processor:
+    count: 1
+  connection:
+    pool:
+      minIdle: 1
+      maxIdle: 1
+      maxTotal: 1
+      jmxEnabled: false
+    protocol: imaps
+    host: imap.gmail.com
+    port: 993
+    ssl: true
+    partialfetch: false
+    fetchsize: 5242880
+    user: TODO
+    pass: TODO
+
+spring:
+  application:
+    name: stayScapeApp
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:stay-scape}
+    username: ${DB_USER:root}
+    password: ${DB_PASS:admin}
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      idle-timeout: 600000
+      max-lifetime: 3300000
+      connection-init-sql: SELECT 1
+      connection-test-query: ${spring.datasource.hikari.connection-init-sql}
+  jackson:
+    deserialization:
+      READ_ENUMS_USING_TO_STRING: true
+      FAIL_ON_UNKNOWN_PROPERTIES: false
+      FAIL_ON_INVALID_SUBTYPE: false
+    serialization:
+      INDENT_OUTPUT: false
+      ORDER_MAP_ENTRIES_BY_KEYS: true
+      WRITE_DATES_AS_TIMESTAMPS: false
+      WRITE_EMPTY_JSON_ARRAYS: false
+      WRITE_ENUMS_USING_TO_STRING: true
+      WRITE_NULL_MAP_VALUES: false
+      WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED: false
+      FAIL_ON_SELF_REFERENCES: true
+    default-property-inclusion: non_null
+    time-zone: UTC
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: false
+        jdbc:
+          lob:
+            non_contextual_creation: true
+          time_zone: UTC
+        generate_statistics: false
+    show-sql: false
+  main:
+    banner-mode: off
+  security:
+    user:
+      name: admin
+      password: admin
+  profiles:
+    active: secure
+  mail:
+    host: ${SMTP_HOST:localhost}
+    port: ${SMTP_PORT:1025}
+    username: ${SMTP_USER:smtp}
+    password: ${SMTP_PASS:pass123}
+    properties:
+      mail:
+        debug: ${MAIL_DEBUG:false}
+        smtp:
+          port: ${spring.mail.port}
+          auth: ${SMTP_AUTH:true}
+          starttls:
+            enable: ${SMTP_STARTTLS_ENABLE:false}
+            required: ${SMTP_STARTTLS_REQUIRED:false}
+        transport.protocol: ${SMTP_PROTOCOL:smtp}
+
+server:
+  address: 127.0.0.1
+  port: 8080
+  error:
+    whitelabel:
+      enabled: true
+    include-stacktrace: always
+
+management:
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: health
+      cors:
+        allowed-origins: "*"
+        allowed-methods: "*"
+  endpoint:
+    health:
+      enabled: true
+      security:
+        enabled: true
