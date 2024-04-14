@@ -65,5 +65,18 @@ class AuthenticationController(
         return ResponseEntity.ok().build()
     }
 
-    
+    @PostMapping("/change-password-request")
+    fun requestResetPassword(): ResponseEntity<Unit>  {
+        authenticationService.requestChangePassword()
+        return ResponseEntity.ok().build()
+    }
+
+    @PostMapping("/complete-password-request")
+    fun completePasswordRequest(
+        @RequestBody @Valid request: CompleteRequestPassword,
+        @RequestParam token: String
+    ): ResponseEntity<Unit> {
+        authenticationService.completePasswordRequest(request.password, token)
+        return ResponseEntity.ok().build()
+    }
 }

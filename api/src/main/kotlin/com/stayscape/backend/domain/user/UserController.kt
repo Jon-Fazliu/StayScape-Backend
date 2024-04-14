@@ -101,6 +101,13 @@ class UserController(
         return ResponseEntity.ok(UserResponseDto.of(userService.getUserById(id)))
     }
 
-    
+    @PutMapping("/self")
+    @LoggedMethod
+    fun editUserSelf(
+        @RequestBody @Valid userEditRequest: UserEditRequest
+    ): ResponseEntity<UserResponseDto> {
+        userService.updateActivity("editUserSelf")
+        return ResponseEntity.ok(UserResponseDto.of(userService.updateSelfUser(userEditRequest)))
+    }
 
 }
