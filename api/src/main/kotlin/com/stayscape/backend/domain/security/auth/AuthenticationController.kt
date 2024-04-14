@@ -40,4 +40,30 @@ class AuthenticationController(
     ): ResponseEntity<AuthenticationResponse> {
         return ResponseEntity.ok(authenticationService.authenticate(request))
     }
+
+    @PostMapping("/resend_email_confirmation_link")
+    fun resendConfirmationEmail(
+        @RequestBody @Valid request: ResendUserConfirmEmailRequest
+    ): ResponseEntity<Unit> {
+        return ResponseEntity.ok(authenticationService.resendConfirmationEmail(request.userId))
+    }
+
+    @PostMapping("/refresh")
+    fun refreshToken(
+        @RequestBody @Valid request: RefreshRequest
+    ): ResponseEntity<RefreshResponse> {
+        return ResponseEntity.ok(authenticationService.refreshAccessToken(request.refreshToken))
+    }
+
+    @PostMapping("/forgot-password-request")
+    fun requestResetPassword(
+        @RequestBody @Valid request: RequestResetPassword
+    ): ResponseEntity<Unit>  {
+
+        val token = authenticationService.requestResetPassword(request.email.lowercase())
+        authenticationService.saveResetPasswordToken(request.email.lowercase(), token)
+        return ResponseEntity.ok().build()
+    }
+
+    
 }
