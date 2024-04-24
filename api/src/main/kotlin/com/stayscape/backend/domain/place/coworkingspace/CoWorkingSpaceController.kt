@@ -1,8 +1,11 @@
 package com.stayscape.backend.domain.place.coworkingspace
 
 import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceCreateDto
+import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceEditDto
 import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceResponseDto
 import com.stayscape.backend.domain.user.UserService
+import com.stayscape.backend.domain.user.dto.UserEditRequest
+import com.stayscape.backend.domain.user.dto.UserResponseDto
 import com.stayscape.backend.logging.LoggedMethod
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -42,4 +45,15 @@ class CoWorkingSpaceController(
         coWorkingSpaceService.deleteCoWorkingSpace(coWorkingSpaceId)
         return ResponseEntity.ok().build()
     }
+
+    @PutMapping("/{coWorkingSpaceId}")
+    @LoggedMethod
+    fun editCoWorkingSpace(
+        @PathVariable("coWorkingSpaceId") coWorkingSpaceId: Int,
+        @RequestBody @Valid coWorkingSpaceEditDto: CoWorkingSpaceEditDto
+    ): ResponseEntity<CoWorkingSpaceResponseDto> {
+        userService.updateActivity("editCoWorkingSpace")
+        return ResponseEntity.ok(CoWorkingSpaceResponseDto.of(coWorkingSpaceService.editCoWorkingSpace(coWorkingSpaceId, coWorkingSpaceEditDto)))
+    }
+
 }

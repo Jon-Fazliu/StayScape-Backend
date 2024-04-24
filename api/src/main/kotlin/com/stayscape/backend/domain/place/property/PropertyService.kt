@@ -3,13 +3,12 @@ package com.stayscape.backend.domain.place.property
 import com.stayscape.backend.StayScapeException
 import com.stayscape.backend.domain.place.Place
 import com.stayscape.backend.domain.place.PlaceRepository
+import com.stayscape.backend.domain.place.PlaceService
 import com.stayscape.backend.domain.place.property.dto.PropertyCreateDto
-import com.stayscape.backend.domain.place.touristspot.TouristSpot
-import com.stayscape.backend.domain.user.UserService
+import com.stayscape.backend.domain.place.property.dto.PropertyEditDto
 import com.stayscape.backend.domain.user.address.Address
 import com.stayscape.backend.domain.user.role.Role
 import com.stayscape.backend.domain.util.SecurityUtils
-import com.stayscape.backend.logging.LoggedMethod
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
@@ -18,7 +17,7 @@ class PropertyService(
     private val propertyRepository: PropertyRepository,
     private val placeRepository: PlaceRepository,
     private val securityUtils: SecurityUtils,
-    private val userService: UserService
+    private val placeService: PlaceService
 ) {
     fun getPropertyById(id: Int) : Property {
         val property = propertyRepository.findById(id).orElseThrow {
@@ -56,21 +55,38 @@ class PropertyService(
     fun deleteProperty(id: Int) {
         securityUtils.userMustBeOfRole(Role.AFFILIATE.toString())
 
-        val property = propertyRepository.findById(id).orElseThrow {
-            StayScapeException(
-                "No property space with id $id exists"
-            )
-        }
+        val property = getPropertyById(id)
         val place = property.place!!
-        val user = userService.getCurrentUser()
-
-        if(user.id != place.id) {
-            throw StayScapeException(
-                "Users can only delete their own properties"
-            )
-        }
+        placeService.checkIsOwnedByUser(place)
 
         place.deleted = true
         placeRepository.save(place)
+    }
+
+    @Transactional
+    fun editProperty(id: Int, propertyEditDto: PropertyEditDto): Property {
+        securityUtils.userMustBeOfRole(Role.AFFILIATE.toString())
+
+        val property = getPropertyById(id)
+
+        val place = property.place!!
+        placeService.checkIsOwnedByUser(place)
+
+        place.apply {
+            address = Address.from(propertyEditDto.address)
+            latitude = propertyEditDto.latitude
+            longitude = propertyEditDto.longitude
+        }
+
+        placeRepository.save(place)
+
+        property.apply {
+            name = propertyEditDto.name
+            website = propertyEditDto.website
+            phone_number = propertyEditDto.phoneNumber
+            description = propertyEditDto.description
+        }
+
+        return propertyRepository.save(property)
     }
 }

@@ -3,7 +3,9 @@ package com.stayscape.backend.domain.place.coworkingspace
 import com.stayscape.backend.StayScapeException
 import com.stayscape.backend.domain.place.Place
 import com.stayscape.backend.domain.place.PlaceRepository
+import com.stayscape.backend.domain.place.PlaceService
 import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceCreateDto
+import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceEditDto
 import com.stayscape.backend.domain.user.UserService
 import com.stayscape.backend.domain.user.address.Address
 import com.stayscape.backend.domain.user.role.Role
@@ -16,7 +18,8 @@ class CoWorkingSpaceService(
     private val coWorkingSpaceRepository: CoWorkingSpaceRepository,
     private val placeRepository: PlaceRepository,
     private val securityUtils: SecurityUtils,
-    private val userService: UserService
+    private val userService: UserService,
+    private val placeService: PlaceService
 ) {
     fun getCoWorkingSpaceById(id: Int) : CoWorkingSpace {
         val coWorkingSpace = coWorkingSpaceRepository.findById(id).orElseThrow {
@@ -56,21 +59,41 @@ class CoWorkingSpaceService(
     fun deleteCoWorkingSpace(id: Int) {
         securityUtils.userMustBeOfRole(Role.AFFILIATE.toString())
 
-        val coWorkingSpace = coWorkingSpaceRepository.findById(id).orElseThrow {
-            StayScapeException(
-                "No coworking space with id $id exists"
-            )
-        }
+        val coWorkingSpace = getCoWorkingSpaceById(id)
         val place = coWorkingSpace.place!!
-        val user = userService.getCurrentUser()
 
-        if(user.id != place.id) {
-            throw StayScapeException(
-                "Users can only delete their own coworking spaces"
-            )
-        }
+        placeService.checkIsOwnedByUser(place)
 
         place.deleted = true
         placeRepository.save(place)
     }
+
+    @Transactional
+    fun editCoWorkingSpace(id: Int, coWorkingSpaceEditDto: CoWorkingSpaceEditDto): CoWorkingSpace {
+        securityUtils.userMustBeOfRole(Role.AFFILIATE.toString())
+
+        val coWorkingSpace = getCoWorkingSpaceById(id)
+
+        val place = coWorkingSpace.place!!
+        placeService.checkIsOwnedByUser(place)
+
+        place.apply {
+            address = Address.from(coWorkingSpaceEditDto.address)
+            latitude = coWorkingSpaceEditDto.latitude
+            longitude = coWorkingSpaceEditDto.longitude
+        }
+
+        placeRepository.save(place)
+
+        coWorkingSpace.apply {
+            name = coWorkingSpaceEditDto.name
+            website = coWorkingSpaceEditDto.website
+            phone_number = coWorkingSpaceEditDto.phoneNumber
+            description = coWorkingSpaceEditDto.description
+        }
+
+        return coWorkingSpaceRepository.save(coWorkingSpace)
+    }
+
+
 }

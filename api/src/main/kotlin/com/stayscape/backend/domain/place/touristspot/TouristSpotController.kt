@@ -1,6 +1,7 @@
 package com.stayscape.backend.domain.place.touristspot
 
 import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotCreateDto
+import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotEditDto
 import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotResponseDto
 import com.stayscape.backend.domain.user.UserService
 import com.stayscape.backend.logging.LoggedMethod
@@ -41,4 +42,15 @@ class TouristSpotController(
         touristSpotService.deleteTouristSpot(touristSpotId)
         return ResponseEntity.ok().build()
     }
+
+    @PutMapping("/{touristSpotId}")
+    @LoggedMethod
+    fun editTouristSpot(
+        @PathVariable("touristSpotId") touristSpotId: Int,
+        @RequestBody @Valid touristSpotEditDto: TouristSpotEditDto
+    ): ResponseEntity<TouristSpotResponseDto> {
+        userService.updateActivity("editTouristSpot")
+        return ResponseEntity.ok(TouristSpotResponseDto.of(touristSpotService.editTouristSpot(touristSpotId, touristSpotEditDto)))
+    }
+
 }

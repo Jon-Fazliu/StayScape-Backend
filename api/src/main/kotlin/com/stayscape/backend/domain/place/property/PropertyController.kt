@@ -1,6 +1,7 @@
 package com.stayscape.backend.domain.place.property
 
 import com.stayscape.backend.domain.place.property.dto.PropertyCreateDto
+import com.stayscape.backend.domain.place.property.dto.PropertyEditDto
 import com.stayscape.backend.domain.place.property.dto.PropertyResponseDto
 import com.stayscape.backend.domain.user.UserService
 import com.stayscape.backend.logging.LoggedMethod
@@ -40,4 +41,15 @@ class PropertyController(
         propertyService.deleteProperty(propertyId)
         return ResponseEntity.ok().build()
     }
+
+    @PutMapping("/{propertyId}")
+    @LoggedMethod
+    fun editProperty(
+        @PathVariable("propertyId") propertyId: Int,
+        @RequestBody @Valid propertyEditDto: PropertyEditDto
+    ): ResponseEntity<PropertyResponseDto> {
+        userService.updateActivity("editProperty")
+        return ResponseEntity.ok(PropertyResponseDto.of(propertyService.editProperty(propertyId, propertyEditDto)))
+    }
+
 }

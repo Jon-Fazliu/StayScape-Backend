@@ -4,7 +4,7 @@ import com.stayscape.backend.StayScapeException
 import com.stayscape.backend.domain.place.Place
 import com.stayscape.backend.domain.place.PlaceRepository
 import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotCreateDto
-import com.stayscape.backend.domain.user.UserService
+import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotEditDto
 import com.stayscape.backend.domain.user.address.Address
 import com.stayscape.backend.domain.user.role.Role
 import com.stayscape.backend.domain.util.SecurityUtils
@@ -53,14 +53,36 @@ class TouristSportService(
     fun deleteTouristSpot(id: Int) {
         securityUtils.userMustBeOfRole(Role.ADMIN.toString())
 
-        val touristSpot = touristSpotRepository.findById(id).orElseThrow {
-            StayScapeException(
-                "No tourist spot with id $id exists"
-            )
-        }
+        val touristSpot = getTouristSpotById(id)
         val place = touristSpot.place!!
 
         place.deleted = true
         placeRepository.save(place)
+    }
+
+    @Transactional
+    fun editTouristSpot(id: Int, touristSpotEditDto: TouristSpotEditDto): TouristSpot {
+        securityUtils.userMustBeOfRole(Role.ADMIN.toString())
+
+        val touristSpot = getTouristSpotById(id)
+
+        val place = touristSpot.place!!
+
+        place.apply {
+            address = Address.from(touristSpotEditDto.address)
+            latitude = touristSpotEditDto.latitude
+            longitude = touristSpotEditDto.longitude
+        }
+
+        placeRepository.save(place)
+
+        touristSpot.apply {
+            name = touristSpotEditDto.name
+            website = touristSpotEditDto.website
+            phone_number = touristSpotEditDto.phoneNumber
+            description = touristSpotEditDto.description
+        }
+
+        return touristSpotRepository.save(touristSpot)
     }
 }
