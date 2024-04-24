@@ -1,22 +1,66 @@
 package com.stayscape.backend.domain.place.touristspot
 
 import com.stayscape.backend.StayScapeException
-import com.stayscape.backend.domain.place.coworkingspace.CoWorkingSpace
-import com.stayscape.backend.logging.LoggedMethod
+import com.stayscape.backend.domain.place.Place
+import com.stayscape.backend.domain.place.PlaceRepository
+import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotCreateDto
+import com.stayscape.backend.domain.user.UserService
+import com.stayscape.backend.domain.user.address.Address
+import com.stayscape.backend.domain.user.role.Role
+import com.stayscape.backend.domain.util.SecurityUtils
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
 
 @Service
 class TouristSportService(
-    private val touristSpotRepository: TouristSpotRepository
+    private val touristSpotRepository: TouristSpotRepository,
+    private val placeRepository: PlaceRepository,
+    private val securityUtils: SecurityUtils
 ) {
-    @LoggedMethod
-    @Transactional
+
     fun getTouristSpotById(id: Int) : TouristSpot {
         val touristSpot = touristSpotRepository.findById(id).orElseThrow {
             StayScapeException("Tourist spot with id $id not found")
         }
 
         return touristSpot
+    }
+
+    @Transactional
+    fun createTouristSpot(touristSpotCreateDto: TouristSpotCreateDto): TouristSpot {
+        securityUtils.userMustBeOfRole(Role.ADMIN.toString())
+
+        val place = Place(
+            address =  Address.from(touristSpotCreateDto.address),
+            latitude = touristSpotCreateDto.latitude,
+            longitude = touristSpotCreateDto.longitude
+        )
+
+        placeRepository.save(place)
+
+        val touristSpot = TouristSpot(
+            place = place,
+            name = touristSpotCreateDto.name,
+            website = touristSpotCreateDto.website,
+            phone_number = touristSpotCreateDto.phoneNumber,
+            description = touristSpotCreateDto.description
+        )
+
+        return touristSpotRepository.save(touristSpot)
+    }
+
+    @Transactional
+    fun deleteTouristSpot(id: Int) {
+        securityUtils.userMustBeOfRole(Role.ADMIN.toString())
+
+        val touristSpot = touristSpotRepository.findById(id).orElseThrow {
+            StayScapeException(
+                "No tourist spot with id $id exists"
+            )
+        }
+        val place = touristSpot.place!!
+
+        place.deleted = true
+        placeRepository.save(place)
     }
 }

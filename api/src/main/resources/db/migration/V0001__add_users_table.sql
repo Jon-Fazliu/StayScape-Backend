@@ -4,8 +4,8 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT NULL,
     lock_version INT NOT NULL DEFAULT 0,
 
-    first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL,
+    first_name VARCHAR(255),
+    last_name VARCHAR(255),
     date_of_birth TIMESTAMP,
     phone_number VARCHAR(255) NOT NULL,
 
@@ -21,6 +21,8 @@ CREATE TABLE users (
     reset_password_token VARCHAR(255),
     confirmed BOOLEAN DEFAULT FALSE,
     role VARCHAR(255) DEFAULT 'USER' NOT NULL,
+
+    website VARCHAR(255),
 
     UNIQUE KEY unique_email (email)
 );

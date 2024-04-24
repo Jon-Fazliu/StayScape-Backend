@@ -9,6 +9,8 @@ CREATE TABLE lodgings (
     double_beds INT NOT NULL,
     room_count INT NOT NULL,
 
+    deleted BOOLEAN DEFAULT false,
+
     FOREIGN KEY (property_id) REFERENCES properties (id)
 );
 

@@ -15,7 +15,8 @@ data class UserResponseDto(
     val phoneNumber: String,
     val address: AddressDto,
     val role: Role,
-    val emailConfirmed: Boolean
+    val emailConfirmed: Boolean,
+    var website: String?
 ) {
     companion object {
         fun of(user: User): UserResponseDto {
@@ -29,6 +30,7 @@ data class UserResponseDto(
                 phoneNumber = user.phoneNumber ?: "",
                 role = user.role,
                 emailConfirmed = user.confirmed,
+                website = user.website
             )
         }
     }

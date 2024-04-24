@@ -1,5 +1,6 @@
 package com.stayscape.backend.domain.user
 
+import com.stayscape.backend.domain.user.dto.AffiliateEditRequest
 import com.stayscape.backend.domain.user.dto.UserEditRequest
 import com.stayscape.backend.domain.user.dto.UserResponseDto
 import com.stayscape.backend.domain.user.dto.UserResponsePageDto
@@ -108,6 +109,15 @@ class UserController(
     ): ResponseEntity<UserResponseDto> {
         userService.updateActivity("editUserSelf")
         return ResponseEntity.ok(UserResponseDto.of(userService.updateSelfUser(userEditRequest)))
+    }
+
+    @PutMapping("affiliate/self")
+    @LoggedMethod
+    fun editSelfAffiliate(
+        @RequestBody @Valid affiliateEditRequest: AffiliateEditRequest
+    ): ResponseEntity<UserResponseDto> {
+        userService.updateActivity("editSelfAffiliate")
+        return ResponseEntity.ok(UserResponseDto.of(userService.updateSelfAffiliate(affiliateEditRequest)))
     }
 
 }

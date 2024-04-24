@@ -3,11 +3,13 @@ package com.stayscape.backend.domain.user
 import com.stayscape.backend.domain.security.JwtService
 import com.stayscape.backend.domain.security.auth.AuthenticationException
 import com.stayscape.backend.domain.security.auth.AuthenticationMailer
+import com.stayscape.backend.domain.security.auth.dto.AffiliateRegisterRequest
 import com.stayscape.backend.domain.security.auth.dto.RegisterRequest
 import com.stayscape.backend.domain.user.activity.Activity
 import com.stayscape.backend.domain.user.activity.ActivityJpaRepository
 import com.stayscape.backend.domain.user.address.Address
 import com.stayscape.backend.domain.user.address.AddressDto
+import com.stayscape.backend.domain.user.dto.AffiliateEditRequest
 import com.stayscape.backend.domain.user.dto.UserEditRequest
 import com.stayscape.backend.domain.user.role.Role
 import com.stayscape.backend.domain.util.SecurityUtils
@@ -75,8 +77,36 @@ class UserService(
         mailer.sendConfirmationEmail(user.email!!, jwtService.generateConfirmToken(user.email!!))
     }
 
-    @Transactional
-    @LoggedMethod
+    fun createAffiliate(registerRequest: AffiliateRegisterRequest) {
+        val checkUser = userJpaRepository.findByEmail(registerRequest.email)
+
+        if (checkUser.isPresent) {
+            throw AuthenticationException("Email has an account", 40304)
+        }
+
+        val user = User(
+            firstName = registerRequest.name.trim(),
+            phoneNumber = registerRequest.phoneNumber.trim(),
+            address = Address.from(AddressDto.trimmed(registerRequest.address)),
+            email = registerRequest.email.lowercase().trim(),
+            accountPassword = passwordEncoder.encode(registerRequest.password),
+            website = registerRequest.website,
+            role = Role.AFFILIATE
+        )
+
+
+        userJpaRepository.save(user)
+
+        activityJpaRepository.save(
+            Activity(
+                lastActivity = Instant.now(utcClock),
+                user = user
+            )
+        )
+
+        mailer.sendConfirmationEmail(user.email!!, jwtService.generateConfirmToken(user.email!!))
+    }
+
     fun getCurrentUser(): User {
         val currentUserId = securityUtils.getCurrentUserId().orElseThrow { UserException("User id not found") }
         return  userJpaRepository.findById(currentUserId)
@@ -84,7 +114,6 @@ class UserService(
     }
 
     @Transactional
-    @LoggedMethod
     fun updateActivity(endpoint: String): Activity {
         val currentUserId = securityUtils.getCurrentUserId().orElseThrow { UserException("User id not found") }
         val user = userJpaRepository.findById(currentUserId)
@@ -96,7 +125,6 @@ class UserService(
         return activityJpaRepository.save(activity)
     }
 
-    @LoggedMethod
     private fun createActivityFor(user: User): Activity {
         val activity = Activity(
             user = user,
@@ -107,15 +135,12 @@ class UserService(
         return activity
     }
 
-    @LoggedMethod
-    @Transactional
     fun getUserById(id: Int): User {
         return userJpaRepository.findById(id).orElseThrow { UserException("User with id $id not found") }
     }
 
 
     @Transactional
-    @LoggedMethod
     fun updateSelfUser(userEditRequest: UserEditRequest): User {
         val currentUserId = securityUtils.getCurrentUserId().orElseThrow { UserException("User id not found") }
         val user = userJpaRepository.findById(currentUserId)
@@ -137,8 +162,26 @@ class UserService(
     }
 
     @Transactional
-    @LoggedMethod
     fun getAllUsers(pageable: Pageable, role: Role): Page<User> {
         return userJpaRepository.findAllByRole(role, pageable)
+    }
+
+    @Transactional
+    fun updateSelfAffiliate(affiliateEditRequest: AffiliateEditRequest): User {
+        val currentUserId = securityUtils.getCurrentUserId().orElseThrow { UserException("User id not found") }
+        val user = userJpaRepository.findById(currentUserId)
+            .orElseThrow { UserException("User with id $currentUserId not found") }
+
+        if (affiliateEditRequest.email.lowercase() == user.email || !userJpaRepository.findByEmail(affiliateEditRequest.email.lowercase()).isPresent) {
+            user.apply {
+                firstName = affiliateEditRequest.name.trim()
+                email = affiliateEditRequest.email.lowercase().trim()
+                phoneNumber = affiliateEditRequest.phoneNumber.trim()
+                address = Address.from(AddressDto.trimmed(affiliateEditRequest.address))
+            }
+
+            return  userJpaRepository.save(user)
+        }
+        throw UserException("Email already present")
     }
 }

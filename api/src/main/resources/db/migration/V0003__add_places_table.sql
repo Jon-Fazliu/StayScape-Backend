@@ -4,6 +4,8 @@ CREATE TABLE places (
     updated_at TIMESTAMP DEFAULT NULL,
     lock_version INT NOT NULL DEFAULT 0,
 
+    user_id INT NOT NULL,
+
     street VARCHAR(255),
     street_number VARCHAR(255),
     postal_code VARCHAR(255),
@@ -13,7 +15,11 @@ CREATE TABLE places (
     latitude DECIMAL(10, 8),
     longitude DECIMAL(11, 8),
 
-    type VARCHAR(255) NOT NULL
+    deleted BOOLEAN DEFAULT false,
+
+    type VARCHAR(255) NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TRIGGER trg_places__check_created_at_unchanged

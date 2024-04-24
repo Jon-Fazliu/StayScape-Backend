@@ -1,6 +1,7 @@
 package com.stayscape.backend.domain.user
 
 import com.stayscape.backend.domain.AbstractJpaEntityVersioned
+import com.stayscape.backend.domain.place.Place
 import com.stayscape.backend.domain.user.address.Address
 import com.stayscape.backend.domain.user.role.Role
 import jakarta.persistence.*
@@ -47,6 +48,12 @@ class User(
 
     @Column(name = "reset_password_token")
     var resetPasswordToken: String? = null,
+
+    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    var places: List<Place> = emptyList(),
+
+    @Column(name = "website")
+    var website:  String? = null,
     ) : AbstractJpaEntityVersioned(), UserDetails {
 
     override fun getAuthorities(): List<SimpleGrantedAuthority> {

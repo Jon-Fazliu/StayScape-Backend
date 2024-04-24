@@ -26,6 +26,14 @@ class AuthenticationController(
         return ResponseEntity.ok().build()
     }
 
+    @PostMapping(path = ["/register"], consumes = [MediaType.APPLICATION_JSON_VALUE])
+    fun registerAffiliate(
+        @RequestBody @Valid request: AffiliateRegisterRequest
+    ): ResponseEntity<Unit> {
+        userService.createAffiliate(request)
+        return ResponseEntity.ok().build()
+    }
+
     @PostMapping("/register/confirm")
     fun confirmEmail(
         @RequestParam token: String

@@ -1,24 +1,16 @@
 package com.stayscape.backend.domain.security.auth.dto
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.stayscape.backend.domain.user.address.AddressDto
-import com.stayscape.backend.domain.validators.NullOrNotBlank
 import jakarta.validation.Valid
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Pattern
 import org.hibernate.validator.constraints.Length
-import java.time.Instant
 
-data class RegisterRequest(
+data class AffiliateRegisterRequest(
     @field:NotBlank
     @field:Length(max = 255)
-    val firstName: String,
-
-    @field:NotBlank
-    @field:Length(max = 255)
-    val lastName: String,
+    val name: String,
 
     @field:NotBlank
     @field:Email
@@ -31,13 +23,13 @@ data class RegisterRequest(
     )
     val password: String,
 
-    @field:NotNull
-    val dateOfBirth: Instant,
-
     @field:NotBlank
     @field:Length(max = 255)
     val phoneNumber: String,
 
     @field:Valid
     val address: AddressDto,
-)
+
+    val website: String?
+
+    )
