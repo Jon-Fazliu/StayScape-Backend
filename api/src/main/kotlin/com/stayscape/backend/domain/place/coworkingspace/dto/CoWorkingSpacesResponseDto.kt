@@ -17,7 +17,7 @@ data class CoWorkingSpacesResponseDto(
     companion object {
         fun of(coWorkingSpace: CoWorkingSpace): CoWorkingSpacesResponseDto {
             return CoWorkingSpacesResponseDto(
-                id = coWorkingSpace.place!!.user!!.id!!,
+                id = coWorkingSpace.place!!.id!!,
                 address = AddressDto.trimmed(AddressDto.of(coWorkingSpace.place!!.address!!)),
                 latitude = coWorkingSpace.place!!.latitude!!,
                 longitude = coWorkingSpace.place!!.longitude!!,

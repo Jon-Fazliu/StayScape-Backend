@@ -19,7 +19,7 @@ data class PropertyResponseDto(
     companion object {
         fun of(property: Property): PropertyResponseDto {
             return PropertyResponseDto(
-                id = property.place!!.user!!.id!!,
+                id = property.place!!.id!!,
                 address = AddressDto.trimmed(AddressDto.of(property.place!!.address!!)),
                 latitude = property.place!!.latitude!!,
                 longitude = property.place!!.longitude!!,

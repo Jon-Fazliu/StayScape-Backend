@@ -18,7 +18,7 @@ data class TouristSpotResponseDto(
     companion object {
         fun of(touristSpot: TouristSpot): TouristSpotResponseDto {
             return TouristSpotResponseDto(
-                id = touristSpot.place!!.user!!.id!!,
+                id = touristSpot.place!!.id!!,
                 address = AddressDto.trimmed(AddressDto.of(touristSpot.place!!.address!!)),
                 latitude = touristSpot.place!!.latitude!!,
                 longitude = touristSpot.place!!.longitude!!,
