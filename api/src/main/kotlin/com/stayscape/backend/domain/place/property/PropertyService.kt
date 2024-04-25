@@ -110,7 +110,7 @@ class PropertyService(
         val user = userService.getCurrentUser()
 
         return when(user.role) {
-            Role.AFFILIATE -> propertyRepository.findByPlaceUserId(user.id!!)
+            Role.AFFILIATE -> propertyRepository.findByPlaceUserIdNotDeleted(user.id!!)
             else -> propertyRepository.findAll()
         }
     }

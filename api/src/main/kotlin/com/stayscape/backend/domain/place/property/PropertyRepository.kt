@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository
 @Repository
 interface PropertyRepository : JpaRepository<Property, Int> {
 
-    @Query("SELECT pr FROM Property pr JOIN pr.place p WHERE p.user.id = :id")
-    fun findByPlaceUserId(id: Int) : List<Property>
+    @Query("SELECT pr FROM Property pr JOIN pr.place p WHERE p.user.id = :id AND NOT p.deleted")
+    fun findByPlaceUserIdNotDeleted(id: Int) : List<Property>
 }
