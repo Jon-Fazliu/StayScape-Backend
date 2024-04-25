@@ -6,6 +6,7 @@ import com.stayscape.backend.domain.user.address.AddressDto
 import java.math.BigDecimal
 
 data class PropertyResponseDto(
+    val id : Int,
     val address: AddressDto,
     val latitude: BigDecimal,
     val longitude: BigDecimal,
@@ -18,6 +19,7 @@ data class PropertyResponseDto(
     companion object {
         fun of(property: Property): PropertyResponseDto {
             return PropertyResponseDto(
+                id = property.place!!.user!!.id!!,
                 address = AddressDto.trimmed(AddressDto.of(property.place!!.address!!)),
                 latitude = property.place!!.latitude!!,
                 longitude = property.place!!.longitude!!,

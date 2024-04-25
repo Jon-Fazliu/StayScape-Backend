@@ -6,6 +6,7 @@ import com.stayscape.backend.domain.user.address.AddressDto
 import java.math.BigDecimal
 
 data class TouristSpotResponseDto(
+    val id: Int,
     val address: AddressDto,
     val latitude: BigDecimal,
     val longitude: BigDecimal,
@@ -17,6 +18,7 @@ data class TouristSpotResponseDto(
     companion object {
         fun of(touristSpot: TouristSpot): TouristSpotResponseDto {
             return TouristSpotResponseDto(
+                id = touristSpot.place!!.user!!.id!!,
                 address = AddressDto.trimmed(AddressDto.of(touristSpot.place!!.address!!)),
                 latitude = touristSpot.place!!.latitude!!,
                 longitude = touristSpot.place!!.longitude!!,

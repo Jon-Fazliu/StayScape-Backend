@@ -5,9 +5,11 @@ CREATE TABLE lodgings (
     updated_at TIMESTAMP DEFAULT NULL,
     lock_version INT NOT NULL DEFAULT 0,
 
-    single_beds INT NOT NULL,
-    double_beds INT NOT NULL,
-    room_count INT NOT NULL,
+    single_beds INT NOT NULL DEFAULT 0,
+    double_beds INT NOT NULL DEFAULT 0,
+    room_count INT NOT NULL DEFAULT 1,
+
+    description VARCHAR(255),
 
     deleted BOOLEAN DEFAULT false,
 

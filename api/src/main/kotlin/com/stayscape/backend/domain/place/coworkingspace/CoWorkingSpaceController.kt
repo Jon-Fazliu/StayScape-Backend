@@ -2,7 +2,7 @@ package com.stayscape.backend.domain.place.coworkingspace
 
 import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceCreateDto
 import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceEditDto
-import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceResponseDto
+import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpacesResponseDto
 import com.stayscape.backend.domain.place.coworkingspace.dto.CoWorkingSpaceListDto
 import com.stayscape.backend.domain.user.UserService
 import com.stayscape.backend.logging.LoggedMethod
@@ -21,18 +21,18 @@ class CoWorkingSpaceController(
     @LoggedMethod
     fun getCoWorkingSpaceWithId(
         @PathVariable("id") id: Int,
-    ): ResponseEntity<CoWorkingSpaceResponseDto> {
+    ): ResponseEntity<CoWorkingSpacesResponseDto> {
         userService.updateActivity("getCoWorkingSpaceWithId")
-        return ResponseEntity.ok(CoWorkingSpaceResponseDto.of(coWorkingSpaceService.getCoWorkingSpaceById(id)))
+        return ResponseEntity.ok(CoWorkingSpacesResponseDto.of(coWorkingSpaceService.getCoWorkingSpaceById(id)))
     }
 
     @PostMapping
     @LoggedMethod
     fun createCoWorkingSpace(
         @RequestBody @Valid coWorkingSpaceCreateDto: CoWorkingSpaceCreateDto,
-    ): ResponseEntity<CoWorkingSpaceResponseDto> {
+    ): ResponseEntity<CoWorkingSpacesResponseDto> {
         userService.updateActivity("createCoWorkingSpace")
-        return ResponseEntity.ok(CoWorkingSpaceResponseDto.of(coWorkingSpaceService.createCoWorkingSpot(coWorkingSpaceCreateDto)))
+        return ResponseEntity.ok(CoWorkingSpacesResponseDto.of(coWorkingSpaceService.createCoWorkingSpot(coWorkingSpaceCreateDto)))
     }
 
     @DeleteMapping("/{coWorkingSpaceId}")
@@ -50,9 +50,9 @@ class CoWorkingSpaceController(
     fun editCoWorkingSpace(
         @PathVariable("coWorkingSpaceId") coWorkingSpaceId: Int,
         @RequestBody @Valid coWorkingSpaceEditDto: CoWorkingSpaceEditDto
-    ): ResponseEntity<CoWorkingSpaceResponseDto> {
+    ): ResponseEntity<CoWorkingSpacesResponseDto> {
         userService.updateActivity("editCoWorkingSpace")
-        return ResponseEntity.ok(CoWorkingSpaceResponseDto.of(coWorkingSpaceService.editCoWorkingSpace(coWorkingSpaceId, coWorkingSpaceEditDto)))
+        return ResponseEntity.ok(CoWorkingSpacesResponseDto.of(coWorkingSpaceService.editCoWorkingSpace(coWorkingSpaceId, coWorkingSpaceEditDto)))
     }
 
     @GetMapping
