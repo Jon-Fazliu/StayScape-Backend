@@ -12,7 +12,7 @@ class PlaceService(
     fun checkIsOwnedByUser(place: Place) {
         val user = userService.getCurrentUser()
 
-        if(user.id != place.id) {
+        if(user.id != place.user!!.id) {
             throw StayScapeException(
                 "Not owned by user."
             )
