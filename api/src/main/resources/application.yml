@@ -11,7 +11,7 @@ logging:
 app:
   jwt: ${APP_JWT:TODO}
   frontend:
-    url: ${FRONTEND_URL:localhost:8080}
+    url: ${FRONTEND_URL:localhost:3000}
   csv:
     price-per-unit: 2.5
     sap-material-number: TODO

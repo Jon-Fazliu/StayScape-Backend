@@ -33,10 +33,13 @@ class PropertyService(
     fun createProperty(propertyCreateDto: PropertyCreateDto): Property {
         securityUtils.userMustBeOfRole(Role.AFFILIATE.toString())
 
+        val user = userService.getCurrentUser()
+
         val place = Place(
             address =  Address.from(propertyCreateDto.address),
             latitude = propertyCreateDto.latitude,
-            longitude = propertyCreateDto.longitude
+            longitude = propertyCreateDto.longitude,
+            user = user
         )
 
         placeRepository.save(place)
@@ -47,7 +50,7 @@ class PropertyService(
             website = propertyCreateDto.website,
             phone_number = propertyCreateDto.phoneNumber,
             description = propertyCreateDto.description,
-            type = propertyCreateDto.type
+            type = propertyCreateDto.type,
         )
 
         return propertyRepository.save(property)

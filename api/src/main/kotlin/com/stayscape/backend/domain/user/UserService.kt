@@ -13,7 +13,6 @@ import com.stayscape.backend.domain.user.dto.AffiliateEditRequest
 import com.stayscape.backend.domain.user.dto.UserEditRequest
 import com.stayscape.backend.domain.user.role.Role
 import com.stayscape.backend.domain.util.SecurityUtils
-import com.stayscape.backend.logging.LoggedMethod
 import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable

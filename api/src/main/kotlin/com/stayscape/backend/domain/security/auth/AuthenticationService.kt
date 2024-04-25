@@ -71,21 +71,14 @@ class AuthenticationService(
     fun refreshAccessToken(refreshToken: String): RefreshResponse {
         val user = userJpaRepository.findByRefreshToken(refreshToken)
             .orElseThrow { UserException("Access token not present") }
-        val activity = activityJpaRepository.findByUser(user).orElseThrow { UserException("No activity") }
-        if (user.refreshToken != null && activity.lastActivity != null) {
-            val inactivityTimeout = Duration.of(10, ChronoUnit.MINUTES)
+        if (user.refreshToken != null) {
 
             if (!jwtService.isTokenValid(refreshToken, user)) {
                 throw UserException("Refresh token is no longer valid")
             }
 
-            if (activity.lastActivity != null && Instant.now(utcClock)
-                    .isBefore(activity.lastActivity!! + inactivityTimeout)
-            ) {
-                return RefreshResponse(jwtService.generateAccessToken(user))
-            } else {
-                throw UserException("Access token expired due to inactivity")
-            }
+            return RefreshResponse(jwtService.generateAccessToken(user))
+
         } else {
             throw UserException("Invalid refresh token")
         }

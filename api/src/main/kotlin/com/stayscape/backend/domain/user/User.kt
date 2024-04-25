@@ -15,13 +15,13 @@ import java.time.Instant
 @Entity
 @Table(name = "users")
 class User(
-    @Column(name = "first_name", nullable = false, length = 255)
+    @Column(name = "first_name", nullable = true, length = 255)
     var firstName: String? = null,
 
-    @Column(name = "last_name", nullable = false, length = 255)
+    @Column(name = "last_name", nullable = true, length = 255)
     var lastName: String? = null,
 
-    @Column(name = "date_of_birth", nullable = false)
+    @Column(name = "date_of_birth", nullable = true)
     var dateOfBirth: Instant? = null,
 
     @Column(name = "phone_number", nullable = false)

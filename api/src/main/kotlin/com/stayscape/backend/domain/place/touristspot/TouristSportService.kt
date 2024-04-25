@@ -5,6 +5,7 @@ import com.stayscape.backend.domain.place.Place
 import com.stayscape.backend.domain.place.PlaceRepository
 import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotCreateDto
 import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotEditDto
+import com.stayscape.backend.domain.user.UserService
 import com.stayscape.backend.domain.user.address.Address
 import com.stayscape.backend.domain.user.role.Role
 import com.stayscape.backend.domain.util.SecurityUtils
@@ -15,7 +16,8 @@ import org.springframework.stereotype.Service
 class TouristSportService(
     private val touristSpotRepository: TouristSpotRepository,
     private val placeRepository: PlaceRepository,
-    private val securityUtils: SecurityUtils
+    private val securityUtils: SecurityUtils,
+    private val userService: UserService
 ) {
 
     fun getTouristSpotById(id: Int) : TouristSpot {
@@ -30,10 +32,14 @@ class TouristSportService(
     fun createTouristSpot(touristSpotCreateDto: TouristSpotCreateDto): TouristSpot {
         securityUtils.userMustBeOfRole(Role.ADMIN.toString())
 
+        val user = userService.getCurrentUser()
+
+
         val place = Place(
             address =  Address.from(touristSpotCreateDto.address),
             latitude = touristSpotCreateDto.latitude,
-            longitude = touristSpotCreateDto.longitude
+            longitude = touristSpotCreateDto.longitude,
+            user = user
         )
 
         placeRepository.save(place)

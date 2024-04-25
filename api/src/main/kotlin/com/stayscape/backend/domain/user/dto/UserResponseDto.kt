@@ -11,7 +11,7 @@ data class UserResponseDto(
     val firstName: String,
     val lastName: String,
     val email: String,
-    val dateOfBirth: Instant,
+    val dateOfBirth: Instant?,
     val phoneNumber: String,
     val address: AddressDto,
     val role: Role,
@@ -23,7 +23,7 @@ data class UserResponseDto(
             return UserResponseDto(
                 id = user.id!!,
                 address = AddressDto.of(user.address!!),
-                dateOfBirth = user.dateOfBirth!!,
+                dateOfBirth = user.dateOfBirth,
                 email = user.email ?: "",
                 firstName = user.firstName ?: "",
                 lastName = user.lastName ?: "",
