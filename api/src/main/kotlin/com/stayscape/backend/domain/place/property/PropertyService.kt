@@ -29,6 +29,16 @@ class PropertyService(
         return property
     }
 
+    fun getProperty(id: Int) : Property {
+        val property = getPropertyById(id)
+
+        if(property.place!!.deleted) {
+            throw StayScapeException("Property is deleted")
+        }
+
+        return property
+    }
+
     @Transactional
     fun createProperty(propertyCreateDto: PropertyCreateDto): Property {
         securityUtils.userMustBeOfRole(Role.AFFILIATE.toString())

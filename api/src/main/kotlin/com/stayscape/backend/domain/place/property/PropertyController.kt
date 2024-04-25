@@ -17,11 +17,11 @@ class PropertyController(
     private val userService: UserService
 ) {
     @GetMapping("/{id}")
-    fun getPropertySpotWithId(
+    fun getPropertyWithId(
         @PathVariable("id") id: Int,
     ): ResponseEntity<PropertyResponseDto> {
         userService.updateActivity("getPropertySpotWithId")
-        return ResponseEntity.ok(PropertyResponseDto.of(propertyService.getPropertyById(id)))
+        return ResponseEntity.ok(PropertyResponseDto.of(propertyService.getProperty(id)))
     }
 
     @PostMapping
