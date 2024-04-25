@@ -161,7 +161,6 @@ class UserService(
         throw UserException("Email already present")
     }
 
-    @Transactional
     fun getAllUsers(pageable: Pageable, role: Role): Page<User> {
         return userJpaRepository.findAllByRole(role, pageable)
     }

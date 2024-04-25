@@ -3,6 +3,7 @@ package com.stayscape.backend.domain.place.touristspot
 import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotCreateDto
 import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotEditDto
 import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotResponseDto
+import com.stayscape.backend.domain.place.touristspot.dto.TouristSpotsListDto
 import com.stayscape.backend.domain.user.UserService
 import com.stayscape.backend.logging.LoggedMethod
 import jakarta.validation.Valid
@@ -51,6 +52,13 @@ class TouristSpotController(
     ): ResponseEntity<TouristSpotResponseDto> {
         userService.updateActivity("editTouristSpot")
         return ResponseEntity.ok(TouristSpotResponseDto.of(touristSpotService.editTouristSpot(touristSpotId, touristSpotEditDto)))
+    }
+
+    @GetMapping
+    @LoggedMethod
+    fun getTouristSpotsList(): ResponseEntity<TouristSpotsListDto> {
+        userService.updateActivity("getTouristSpotsList")
+        return ResponseEntity.ok(TouristSpotsListDto.of(touristSpotService.getTouristSpotsList()))
     }
 
 }

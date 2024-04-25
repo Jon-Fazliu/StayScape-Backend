@@ -95,5 +95,14 @@ class CoWorkingSpaceService(
         return coWorkingSpaceRepository.save(coWorkingSpace)
     }
 
+    fun getCoworkingSpacesList(): List<CoWorkingSpace> {
+        val user = userService.getCurrentUser()
+
+        return when(user.role) {
+            Role.AFFILIATE -> coWorkingSpaceRepository.findByPlaceUserId(user.id!!)
+            else -> coWorkingSpaceRepository.findAll()
+        }
+    }
+
 
 }

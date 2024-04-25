@@ -85,4 +85,8 @@ class TouristSportService(
 
         return touristSpotRepository.save(touristSpot)
     }
+
+    fun getTouristSpotsList(): List<TouristSpot> {
+        return touristSpotRepository.findAll()
+    }
 }

@@ -1,5 +1,6 @@
 package com.stayscape.backend.domain.place.property
 
+import com.stayscape.backend.domain.place.property.dto.PropertiesListDto
 import com.stayscape.backend.domain.place.property.dto.PropertyCreateDto
 import com.stayscape.backend.domain.place.property.dto.PropertyEditDto
 import com.stayscape.backend.domain.place.property.dto.PropertyResponseDto
@@ -50,6 +51,13 @@ class PropertyController(
     ): ResponseEntity<PropertyResponseDto> {
         userService.updateActivity("editProperty")
         return ResponseEntity.ok(PropertyResponseDto.of(propertyService.editProperty(propertyId, propertyEditDto)))
+    }
+
+    @GetMapping
+    @LoggedMethod
+    fun getPropertiesList(): ResponseEntity<PropertiesListDto> {
+        userService.updateActivity("getPropertiesList")
+        return ResponseEntity.ok(PropertiesListDto.of(propertyService.getPropertiesList()))
     }
 
 }

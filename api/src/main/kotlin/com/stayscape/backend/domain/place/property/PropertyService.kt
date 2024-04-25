@@ -6,6 +6,7 @@ import com.stayscape.backend.domain.place.PlaceRepository
 import com.stayscape.backend.domain.place.PlaceService
 import com.stayscape.backend.domain.place.property.dto.PropertyCreateDto
 import com.stayscape.backend.domain.place.property.dto.PropertyEditDto
+import com.stayscape.backend.domain.user.UserService
 import com.stayscape.backend.domain.user.address.Address
 import com.stayscape.backend.domain.user.role.Role
 import com.stayscape.backend.domain.util.SecurityUtils
@@ -17,7 +18,8 @@ class PropertyService(
     private val propertyRepository: PropertyRepository,
     private val placeRepository: PlaceRepository,
     private val securityUtils: SecurityUtils,
-    private val placeService: PlaceService
+    private val placeService: PlaceService,
+    private val userService: UserService
 ) {
     fun getPropertyById(id: Int) : Property {
         val property = propertyRepository.findById(id).orElseThrow {
@@ -88,5 +90,15 @@ class PropertyService(
         }
 
         return propertyRepository.save(property)
+    }
+
+
+    fun getPropertiesList(): List<Property> {
+        val user = userService.getCurrentUser()
+
+        return when(user.role) {
+            Role.AFFILIATE -> propertyRepository.findByPlaceUserId(user.id!!)
+            else -> propertyRepository.findAll()
+        }
     }
 }
